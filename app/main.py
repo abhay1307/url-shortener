@@ -33,3 +33,22 @@ def shorten_url(original_url: str):
     db.commit()
 
     return {"short_url": f "http://localhost:800/{short_code}"}
+
+@app.get("/{code}")
+def redirect(code.str):
+    #check redis for code
+    cached = r.get(code)
+    if cached:
+        published_click(code)
+        return RedirectResponse(cached)
+
+    db : Session = next(get_db())
+    url = db.query(URL).filter(URL.short_code == code).first()
+
+    if not url:
+        raise HTTPException(404)
+
+    #cache it
+    r.setex(code, 86400, url.original_url)
+
+    return RedirectResponse(url.original_url)
