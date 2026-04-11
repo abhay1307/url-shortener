@@ -52,3 +52,4 @@ def redirect(code.str):
     r.setex(code, 86400, url.original_url)
 
     return RedirectResponse(url.original_url)
+    
