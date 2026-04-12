@@ -32,7 +32,7 @@ def shorten_url(original_url: str):
     url.short_code = short_code
     db.commit()
 
-    return {"short_url": f "http://localhost:800/{short_code}"}
+    return {"short_url": f"http://localhost:800/{short_code}"}
 
 @app.get("/{code}")
 def redirect(code.str):
@@ -52,4 +52,3 @@ def redirect(code.str):
     r.setex(code, 86400, url.original_url)
 
     return RedirectResponse(url.original_url)
-    
