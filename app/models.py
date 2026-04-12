@@ -10,7 +10,7 @@ class URL(Base) :
     short_code = Column(String, unique=True, index=True)
     created_at = Column(DateTime, default=datetime.utcnow)
 
-class URL(Base) :
+class Click(Base) :
     __tablename__ = "clicks"
 
     id = Column(Integer, primary_key=True)
