@@ -35,7 +35,7 @@ def shorten_url(original_url: str):
     return {"short_url": f"http://localhost:800/{short_code}"}
 
 @app.get("/{code}")
-def redirect(code.str):
+def redirect(code:str):
     #check redis for code
     cached = r.get(code)
     if cached:
