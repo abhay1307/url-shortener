@@ -439,6 +439,7 @@
     ? 'http://localhost:8000'
     : 'http://' + window.location.hostname + ':8000';
   let currentCode = '';
+  let currentShortUrl = '';
   let allUrls = [];
 
   // ── NAVIGATION ──────────────────────────────────────────
@@ -474,6 +475,7 @@
       if (!res.ok) throw new Error(await res.text());
       const data = await res.json();
       currentCode = data.short_code;
+      currentShortUrl = data.short_url;
       const box = document.getElementById('result-box');
       const link = document.getElementById('result-link');
       link.href = data.short_url;
@@ -522,8 +524,7 @@
   }
 
   function copyLink() {
-    const url = document.getElementById('result-link').href;
-    copyToClipboard(url, () => {
+    copyToClipboard(currentShortUrl, () => {
       const btn = document.getElementById('copy-btn');
       btn.textContent = 'Copied!';
       btn.classList.add('copied');
