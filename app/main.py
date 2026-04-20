@@ -1,54 +1,34 @@
-from fastapi import FastAPI, HTTPException
-from fastapi.responses import RedirectResponse
-from sqlalchemy.orm import Session
-from database import SessionLocal
-from models import URL
-from utils import encode
-import redis 
-import json
-from producer import publish_click
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
-app = FastAPI()
+from app.database import create_tables
+from app.routes import analytics, url
 
-r = redis.Redis(host="redis", port=6379, decode_response=True)
+app = FastAPI(
+    title="URL Shortener",
+    description="Distributed URL shortener with real-time click analytics",
+    version="1.0.0",
+)
 
-def get_db():
-    db=SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
-@app.post("/shorten")
-def shorten_url(original_url: str):
-    db: Session = next(get_db())
 
-    url = URL(original_url=original_url)
-    db.add(url)
-    db.commit()
-    db.refresh(url)
+@app.on_event("startup")
+def on_startup():
+    create_tables()
+    print("[API] Tables ready. Server started.")
 
-    short_code = encode(url.id)
-    url.short_code = short_code
-    db.commit()
 
-    return {"short_url": f"http://localhost:800/{short_code}"}
+app.include_router(url.router)
+app.include_router(analytics.router)
 
-@app.get("/{code}")
-def redirect(code:str):
-    #check redis for code
-    cached = r.get(code)
-    if cached:
-        published_click(code)
-        return RedirectResponse(cached)
 
-    db : Session = next(get_db())
-    url = db.query(URL).filter(URL.short_code == code).first()
-
-    if not url:
-        raise HTTPException(404)
-
-    #cache it
-    r.setex(code, 86400, url.original_url)
-
-    return RedirectResponse(url.original_url)
+@app.get("/health")
+def health():
+    return {"status": "ok"}
