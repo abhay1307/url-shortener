@@ -435,7 +435,9 @@
 <div class="toast" id="toast"></div>
 
 <script>
-  const API = window.location.hostname === 'localhost' ? 'http://localhost:8000' : '';
+  const API = window.location.hostname === 'localhost'
+    ? 'http://localhost:8000'
+    : 'http://' + window.location.hostname + ':8000';
   let currentCode = '';
   let allUrls = [];
 
@@ -582,8 +584,8 @@
   }
 
   function copyShortUrl(code) {
-    const url = (API || window.location.origin) + '/' + code;
-    copyToClipboard(url, () => showToast('Copied!', 'success'));
+    const base = API || 'http://' + window.location.hostname + ':8000';
+    copyToClipboard(base + '/' + code, () => showToast('Copied!', 'success'));
   }
 
   // ── ANALYTICS ────────────────────────────────────────────
