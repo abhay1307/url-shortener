@@ -25,10 +25,10 @@ def on_startup():
     print("[API] Tables ready. Server started.")
 
 
-app.include_router(url.router)
-app.include_router(analytics.router)
-
-
 @app.get("/health")
 def health():
     return {"status": "ok"}
+
+
+app.include_router(analytics.router)
+app.include_router(url.router)
