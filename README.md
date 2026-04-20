@@ -2,8 +2,8 @@
 
 A production-grade URL shortening service built to demonstrate distributed systems, async event processing, and high-throughput backend engineering.
 
-**Live demo:** http://your-ec2-ip:3000  
-**API docs:** http://your-ec2-ip:8000/docs
+**Live demo:** http://52.45.43.24:3000  
+**API docs:** http://52.45.43.24:8000/docs
 
 ---
 
